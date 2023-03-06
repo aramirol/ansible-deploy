@@ -1,0 +1,8 @@
+---
+# handlers file for apache-deploy
+
+- name: restart webserver
+  service:
+    name: "{{ item.service }}"
+    state: restarted
+  loop: "{{ webserver }}"

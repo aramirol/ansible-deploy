@@ -1,0 +1,29 @@
+---
+- name: Install packages
+  dnf:
+    name: "{{ item.package }}"
+    state: latest
+  loop: "{{ webserver }}"
+
+- name: Ensure firewalld and httpd are enabled and started
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - httpd
+    - firewalld
+
+- name: Open necessary ports
+  firewalld:
+    service: http
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Ensure index.html content message
+  copy:
+    content: "{{ web_content }}"
+    dest: "{{ web_root }}/index.html"
+  notify: restart webserver
+
